@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "ویرگول بک‌آپ | Virgool Backup",
+  "version": "1.0.0",
+  "description": "پشتیبان‌گیری کامل از مقالات، متن، تصاویر و نظرات ویرگول با خروجی JSON و PDF",
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    },
+    "default_title": "ویرگول بک‌آپ"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://virgool.io/*"
+      ],
+      "js": [
+        "content/content.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "storage",
+    "downloads",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://virgool.io/*",
+    "https://files.virgool.io/*"
+  ]
+}
