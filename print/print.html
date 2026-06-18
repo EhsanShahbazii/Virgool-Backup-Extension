@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>خروجی PDF ویرگول</title>
+  <link rel="stylesheet" href="print.css">
+</head>
+<body>
+  <!-- Floating Print Toolbar (hidden during print) -->
+  <header class="print-toolbar" id="toolbar">
+    <div class="toolbar-info">
+      <img src="../assets/icons/icon-48.png" alt="Virgool" class="brand-icon-print">
+      <div>
+        <div class="toolbar-title" id="toolbarTitle">پیش‌نمایش چاپ و خروجی PDF</div>
+      </div>
+      <span class="toolbar-badge" id="postCountBadge">در حال بارگذاری...</span>
+    </div>
+
+    <div class="toolbar-actions">
+      <select id="postFilter" class="post-select">
+        <option value="all">تمام مقالات (کتابچه کامل)</option>
+      </select>
+
+      <label class="toggle-label">
+        <input type="checkbox" id="toggleComments" checked>
+        <span>شامل نظرات</span>
+      </label>
+
+      <label class="toggle-label">
+        <input type="checkbox" id="toggleImages" checked>
+        <span>شامل تصاویر</span>
+      </label>
+
+      <button id="btnPrint" class="btn btn-primary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>چاپ / ذخیره PDF</span>
+      </button>
+
+      <button id="btnClose" class="btn btn-secondary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span>بستن</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Printable Document Body -->
+  <main class="doc-container" id="docContainer">
+    <div style="text-align: center; padding: 100px 0; color: var(--color-gray-600);" id="loadingState">
+      در حال آماده‌سازی و بارگذاری مقالات...
+    </div>
+  </main>
+
+  <script type="module" src="print.js"></script>
+</body>
+</html>
