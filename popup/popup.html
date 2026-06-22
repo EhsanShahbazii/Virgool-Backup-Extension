@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پشتیبان‌گیر ویرگول</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Header with official Virgool style -->
+  <header class="popup-header">
+    <div class="brand-wrapper">
+      <img src="../assets/icons/icon-48.png" alt="Virgool" class="brand-icon">
+      <div class="brand-title">ویرگول بک‌آپ</div>
+    </div>
+    <a id="btnOpenDashboard" class="dashboard-link" title="مشاهده آرشیو و مدیریت کامل">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>داشبورد کامل</span>
+    </a>
+  </header>
+
+  <!-- Error Alert -->
+  <div id="errorAlert" class="error-msg"></div>
+
+  <!-- Primary Input Card -->
+  <section class="card" id="inputCard">
+    <div class="input-label">
+      <span>نام کاربری نویسنده در ویرگول:</span>
+      <span id="detectedBadge" class="detected-badge" style="display: none;">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>شناسایی خودکار</span>
+      </span>
+    </div>
+
+    <div class="input-row">
+      <input 
+        type="text" 
+        id="usernameInput" 
+        class="username-input" 
+        placeholder="مثال: ehsanshahbazii" 
+        autocomplete="off" 
+        spellcheck="false"
+      />
+    </div>
+
+    <button id="btnStartBackup" class="btn btn-primary">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span>شروع پشتیبان‌گیری کامل</span>
+    </button>
+  </section>
+
+  <!-- Progress Box -->
+  <section class="progress-box" id="progressBox">
+    <div class="progress-header">
+      <span class="progress-title" id="progressPhase">در حال پردازش...</span>
+      <span class="progress-percent" id="progressPercent">۰٪</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+    <div class="progress-status-msg" id="progressStatusMsg">در حال برقراری ارتباط با ویرگول...</div>
+    <div class="dont-close-notice">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span>لطفاً تا پایان عملیات، این پنجره را نبندید.</span>
+    </div>
+    <div class="progress-actions">
+      <button id="btnCancelBackup" class="btn btn-cancel" title="لغو و توقف فرآیند پشتیبان‌گیری">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <span>توقف و لغو پشتیبان‌گیری</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Result Box -->
+  <section class="result-box" id="resultBox">
+    <div class="result-title">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span>پشتیبان‌گیری با موفقیت انجام شد</span>
+    </div>
+
+    <div class="result-stats-row">
+      <div class="stat-pill">
+        <div class="stat-pill-val" id="resPostsCount">۰</div>
+        <div class="stat-pill-lbl">مقالات با متن کامل</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-val" id="resCommentsCount">۰</div>
+        <div class="stat-pill-lbl">کل نظرات و پاسخ‌ها</div>
+      </div>
+    </div>
+
+    <button id="btnDownloadJson" class="btn btn-primary" style="margin-bottom: 8px;">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>دانلود فایل JSON</span>
+    </button>
+    <button id="btnViewPdf" class="btn btn-outline-blue">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span>چاپ و خروجی PDF</span>
+    </button>
+    <button id="btnOpenManagerFromRes" class="btn btn-ghost" style="margin-top: 4px;">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>مشاهده در داشبورد</span>
+    </button>
+  </section>
+
+  <!-- Latest Saved Backup Footer -->
+  <footer class="latest-backup-card" id="latestBackupFooter" style="display: none;">
+    <span>آخرین بک‌آپ: <b id="latestBackupName">--</b></span>
+    <a id="latestBackupLink" class="latest-backup-link">نمایش</a>
+  </footer>
+
+  <!-- Developer Credit Footer -->
+  <footer class="popup-credit-footer">
+    <span>توسعه‌داده‌شده با</span>
+    <svg class="icon-heart" viewBox="0 0 24 24" fill="#d7373f" stroke="#d7373f" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <span>توسط</span>
+    <a href="https://github.com/EhsanShahbazii" target="_blank" rel="noreferrer" class="author-link">احسان شهبازی</a>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
