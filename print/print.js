@@ -7,6 +7,8 @@ import { getBackupById, getLatestBackup } from '../lib/storage.js';
 import { countAllComments } from '../lib/virgool-api.js';
 import { formatPersianDate, toPersianDigits } from '../lib/date-utils.js';
 
+const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
+
 let currentBackup = null;
 
 async function init() {
@@ -157,7 +159,7 @@ function renderDocument() {
 
     html += `
       <section class="cover-page">
-        <img class="cover-avatar" src="${user.avatar || '../assets/icons/icon-128.png'}" alt="${escapeHtml(user.name || user.username || 'کاربر')}" onerror="this.src='../assets/icons/icon-128.png'" />
+        <img class="cover-avatar" src="${user.avatar || DEFAULT_AVATAR_URL}" alt="${escapeHtml(user.name || user.username || 'کاربر')}" onerror="this.src='${DEFAULT_AVATAR_URL}'" />
         <h1 class="cover-title">${escapeHtml(userDisplayName)}</h1>
         <div class="cover-subtitle">@${escapeHtml(user.username || '')}</div>
         ${user.bio ? `<div class="cover-bio">${escapeHtml(user.bio)}</div>` : ''}
@@ -390,7 +392,7 @@ function renderCommentCardRecursive(comment, depth = 0) {
   const isReply = depth > 0;
   const cardClass = isReply ? 'nested-reply-item' : 'comment-card';
 
-  const avatar = comment.user?.avatar || '../assets/icons/icon-48.png';
+  const avatar = comment.user?.avatar || DEFAULT_AVATAR_URL;
   const authorName = comment.user?.name || 'کاربر ویرگول';
   const username = comment.user?.username || '';
   const dateFormatted = formatPersianDate(comment.publishedAt, true);
@@ -399,7 +401,7 @@ function renderCommentCardRecursive(comment, depth = 0) {
     <div class="${cardClass}" id="comment-${comment.hash}">
       <div class="comment-top">
         <div class="comment-author">
-          <img class="comment-avatar" src="${avatar}" alt="" loading="eager" decoding="async" onerror="this.src='../assets/icons/icon-48.png'" />
+          <img class="comment-avatar" src="${avatar}" alt="" loading="eager" decoding="async" onerror="this.src='${DEFAULT_AVATAR_URL}'" />
           <div>
             <div class="comment-author-name">${escapeHtml(authorName)}</div>
             ${username ? `<div class="comment-author-user">@${escapeHtml(username)}</div>` : ''}
