@@ -4,7 +4,7 @@
  */
 
 import { getAllBackups, getBackupById, deleteBackup, saveBackup } from '../lib/storage.js';
-import { backupUser, countAllComments } from '../lib/virgool-api.js';
+import { backupUser, countAllComments, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
 import { formatPersianDate, toPersianDigits } from '../lib/date-utils.js';
@@ -474,6 +474,43 @@ function setupModalEvents() {
     }
   });
 
+  // Virgool Speed & Worker Range Slider setup
+  const speedRange = document.getElementById('modalSpeedRange');
+  const speedBadge = document.getElementById('modalSpeedRiskBadge');
+  const speedBadgeText = document.getElementById('modalSpeedBadgeText');
+  const speedWorkerVal = document.getElementById('modalSpeedWorkerVal');
+  const speedDelayVal = document.getElementById('modalSpeedDelayVal');
+
+  const updateModalSpeedUI = (val) => {
+    const config = SPEED_PRESETS[val] || SPEED_PRESETS[1];
+    if (speedBadge) {
+      speedBadge.className = `speed-badge risk-${config.risk}`;
+    }
+    if (speedBadgeText) {
+      speedBadgeText.textContent = config.label;
+    }
+    if (speedWorkerVal) {
+      speedWorkerVal.textContent = config.threadText;
+    }
+    if (speedDelayVal) {
+      speedDelayVal.textContent = config.delayText;
+    }
+  };
+
+  if (speedRange) {
+    const savedPreset = localStorage.getItem('virgool_backup_speed_preset') || '1';
+    speedRange.value = savedPreset;
+    updateModalSpeedUI(savedPreset);
+
+    speedRange.addEventListener('input', (e) => {
+      const val = e.target.value;
+      updateModalSpeedUI(val);
+      try {
+        localStorage.setItem('virgool_backup_speed_preset', val);
+      } catch (err) {}
+    });
+  }
+
   btnStart.addEventListener('click', startModalBackup);
   btnCancel.addEventListener('click', cancelModalBackup);
 }
@@ -506,9 +543,15 @@ async function startModalBackup() {
 
   modalAbortController = new AbortController();
 
+  const speedRange = document.getElementById('modalSpeedRange');
+  const presetKey = speedRange ? speedRange.value : '1';
+  const speedConfig = SPEED_PRESETS[presetKey] || SPEED_PRESETS[1];
+
   try {
     const backupPackage = await backupUser(rawUsername, {
       signal: modalAbortController.signal,
+      workers: speedConfig.workers,
+      delayMs: speedConfig.delayMs,
       onProgress: ({ phase, percent, message }) => {
         phaseEl.textContent = phase;
         percentEl.textContent = `${toPersianDigits(percent)}٪`;
