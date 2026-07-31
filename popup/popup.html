@@ -190,11 +190,26 @@
     </button>
   </section>
 
-  <!-- Latest Saved Backup Footer -->
-  <footer class="latest-backup-card" id="latestBackupFooter" style="display: none;">
-    <span>آخرین بک‌آپ: <b id="latestBackupName">--</b></span>
-    <a id="latestBackupLink" class="latest-backup-link">نمایش</a>
-  </footer>
+  <!-- Top 3 Recent Backups Section -->
+  <section class="recent-backups-section" id="recentBackupsSection" style="display: none;">
+    <div class="recent-backups-header">
+      <div class="recent-backups-title">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>آخرین پشتیبان‌ها</span>
+      </div>
+      <button id="btnMoreBackups" class="recent-more-btn" title="مشاهده همه و مدیریت در داشبورد">
+        <span>نمایش بیشتر</span>
+        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="recent-backups-list" id="recentBackupsList"></div>
+  </section>
 
   <!-- Developer Credit Footer -->
   <footer class="popup-credit-footer">
