@@ -6,12 +6,13 @@
 import { backupUser, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { saveBackup, getAllBackups } from '../lib/storage.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
-import { toPersianDigits } from '../lib/date-utils.js';
+import { formatPersianDate, toPersianDigits, formatDuration, formatTimer, formatRelativeTime } from '../lib/date-utils.js';
 
 const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
 
 let abortController = null;
 let currentBackupResult = null;
+let progressTimerInterval = null;
 
 async function init() {
   setupUIEvents();
@@ -146,6 +147,8 @@ async function loadTopRecentBackups() {
       const displayName = versionTag ? `${baseName} (${versionTag})` : baseName;
       const avatarUrl = item.user?.avatar || DEFAULT_AVATAR_URL;
       const postsCount = item.posts?.length || 0;
+      const timeAgo = formatRelativeTime(item.createdAt);
+      const durText = item.stats?.durationMs ? formatDuration(item.stats.durationMs) : null;
 
       const itemEl = document.createElement('div');
       itemEl.className = 'recent-backup-item';
@@ -155,7 +158,12 @@ async function loadTopRecentBackups() {
           <img class="recent-item-avatar" src="${avatarUrl}" alt="" onerror="this.src='${DEFAULT_AVATAR_URL}'" />
           <div class="recent-item-info">
             <span class="recent-item-name">${escapeHtml(displayName)}</span>
-            <span class="recent-item-meta">${toPersianDigits(postsCount)} مقاله</span>
+            <div class="recent-item-meta">
+              <span>${toPersianDigits(postsCount)} مقاله</span>
+              <span>•</span>
+              <span>${timeAgo}</span>
+              ${durText ? `<span>•</span><span>${durText}</span>` : ''}
+            </div>
           </div>
         </div>
         <div class="recent-item-actions">
@@ -208,6 +216,20 @@ async function startBackupProcess() {
   const presetKey = speedRange ? speedRange.value : '1';
   const speedConfig = SPEED_PRESETS[presetKey] || SPEED_PRESETS[1];
 
+  // Initialize live timer and worker count in progress box
+  const timerEl = document.getElementById('progressElapsedTimer');
+  const workerInfoEl = document.getElementById('progressWorkersInfo');
+  if (timerEl) timerEl.textContent = '۰۰:۰۰';
+  if (workerInfoEl) workerInfoEl.textContent = speedConfig.label;
+
+  const startTimestamp = Date.now();
+  if (progressTimerInterval) clearInterval(progressTimerInterval);
+  progressTimerInterval = setInterval(() => {
+    const elapsedSec = Math.floor((Date.now() - startTimestamp) / 1000);
+    const liveTimer = document.getElementById('progressElapsedTimer');
+    if (liveTimer) liveTimer.textContent = formatTimer(elapsedSec);
+  }, 1000);
+
   try {
     const backupPackage = await backupUser(rawUsername, {
       signal: abortController.signal,
@@ -220,12 +242,27 @@ async function startBackupProcess() {
     await saveBackup(backupPackage);
     await loadTopRecentBackups();
 
-    // Show result view
+    // Show result view with detailed stats
     document.getElementById('progressBox').style.display = 'none';
     document.getElementById('resultBox').style.display = 'block';
 
     document.getElementById('resPostsCount').textContent = toPersianDigits(backupPackage.posts.length);
     document.getElementById('resCommentsCount').textContent = toPersianDigits(backupPackage.stats.totalComments);
+
+    const totalDurEl = document.getElementById('resTotalDuration');
+    if (totalDurEl) {
+      totalDurEl.textContent = formatDuration(backupPackage.stats.durationMs);
+    }
+
+    const workersUsedEl = document.getElementById('resWorkersUsed');
+    if (workersUsedEl) {
+      workersUsedEl.textContent = `${toPersianDigits(backupPackage.stats.workersUsed || speedConfig.workers || 1)} ترد`;
+    }
+
+    const timestampEl = document.getElementById('resTimestampVal');
+    if (timestampEl) {
+      timestampEl.textContent = formatPersianDate(backupPackage.createdAt, true);
+    }
   } catch (err) {
     console.error('Backup error:', err);
     document.getElementById('progressBox').style.display = 'none';
@@ -233,11 +270,19 @@ async function startBackupProcess() {
     await loadTopRecentBackups();
     showError(err.message || 'خطایی در فرآیند پشتیبان‌گیری رخ داد.');
   } finally {
+    if (progressTimerInterval) {
+      clearInterval(progressTimerInterval);
+      progressTimerInterval = null;
+    }
     abortController = null;
   }
 }
 
 function cancelBackupProcess() {
+  if (progressTimerInterval) {
+    clearInterval(progressTimerInterval);
+    progressTimerInterval = null;
+  }
   if (abortController) {
     abortController.abort();
     abortController = null;

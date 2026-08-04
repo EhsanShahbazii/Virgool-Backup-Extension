@@ -84,10 +84,10 @@
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
-          تک‌ترد • بدون ریسک
+          بدون ریسک
         </span>
         <span class="range-lbl-right">
-          ۸ پردازشگر • ریسک بالا
+          ریسک بالا
           <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -117,6 +117,27 @@
       <div class="progress-bar-fill" id="progressBarFill"></div>
     </div>
     <div class="progress-status-msg" id="progressStatusMsg">در حال برقراری ارتباط با ویرگول...</div>
+
+    <!-- Progress live details (timer and workers) -->
+    <div class="progress-details-bar">
+      <div class="progress-detail-item">
+        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>زمان سپری‌شده:</span>
+        <b id="progressElapsedTimer">۰۰:۰۰</b>
+      </div>
+      <div class="progress-detail-item">
+        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span id="progressWorkersInfo">۱ پردازشگر</span>
+      </div>
+    </div>
+
     <div class="dont-close-notice">
       <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
         stroke-linejoin="round">
@@ -150,15 +171,32 @@
       <span>پشتیبان‌گیری با موفقیت انجام شد</span>
     </div>
 
-    <div class="result-stats-row">
+    <div class="result-stats-grid">
       <div class="stat-pill">
         <div class="stat-pill-val" id="resPostsCount">۰</div>
-        <div class="stat-pill-lbl">مقالات با متن کامل</div>
+        <div class="stat-pill-lbl">تعداد مقالات</div>
       </div>
       <div class="stat-pill">
         <div class="stat-pill-val" id="resCommentsCount">۰</div>
-        <div class="stat-pill-lbl">کل نظرات و پاسخ‌ها</div>
+        <div class="stat-pill-lbl">نظرات و پاسخ‌ها</div>
       </div>
+      <div class="stat-pill">
+        <div class="stat-pill-val" id="resTotalDuration">۰ ثانیه</div>
+        <div class="stat-pill-lbl">زمان کل پشتیبان‌گیری</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-val" id="resWorkersUsed">۱ ترد</div>
+        <div class="stat-pill-lbl">پردازشگرها</div>
+      </div>
+    </div>
+
+    <div class="result-timestamp-card" id="resTimestampCard">
+      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span>تاریخ و زمان ثبت: <b id="resTimestampVal">--</b></span>
     </div>
 
     <button id="btnDownloadJson" class="btn btn-primary" style="margin-bottom: 8px;">
@@ -194,7 +232,8 @@
   <section class="recent-backups-section" id="recentBackupsSection" style="display: none;">
     <div class="recent-backups-header">
       <div class="recent-backups-title">
-        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
@@ -202,7 +241,8 @@
       </div>
       <button id="btnMoreBackups" class="recent-more-btn" title="مشاهده همه و مدیریت در داشبورد">
         <span>نمایش بیشتر</span>
-        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
       </button>

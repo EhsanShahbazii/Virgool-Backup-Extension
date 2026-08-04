@@ -292,39 +292,58 @@ body {
   transition: width 0.3s ease;
 }
 
-.progress-status-msg {
-  font-size: 12px;
-  color: var(--color-gray-700);
-  line-height: 1.6;
-  min-height: 38px;
-}
-
-/* Result / Success Card */
-.result-box {
-  display: none;
-  background: var(--color-white);
-  border: 1px solid #c8e6c9;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-}
-
-.result-title {
-  font-size: 14px;
-  font-weight: 800;
-  color: #2e7d32;
+.progress-details-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 10px 0;
+  font-size: 11px;
 }
 
+.progress-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-gray-700);
+}
+
+.progress-detail-item b {
+  font-weight: 800;
+  color: var(--color-blue);
+}
+
+.result-stats-grid,
 .result-stats-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.result-timestamp-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 10.5px;
+  color: var(--color-gray-700);
+  margin-bottom: 14px;
+}
+
+.result-timestamp-card b {
+  color: var(--color-gray-900);
+  font-weight: 700;
+}
+
+.result-timestamp-card svg {
+  color: var(--color-blue);
 }
 
 .stat-pill {
