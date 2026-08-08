@@ -72,6 +72,54 @@
 
       <!-- Active Backup Detail View -->
       <div id="activeBackupContent" style="display: none;">
+        <!-- Success Banner from newly created backup -->
+        <section class="dashboard-success-banner" id="dashboardSuccessBanner" style="display: none;">
+          <div class="success-banner-header">
+            <div class="success-banner-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+              <span>پشتیبان‌گیری با موفقیت انجام شد</span>
+            </div>
+            <button id="btnCloseSuccessBanner" class="banner-close-btn" title="بستن پیام">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="result-stats-grid">
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="bannerResPostsCount">۰</div>
+              <div class="stat-pill-lbl">تعداد مقالات</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="bannerResCommentsCount">۰</div>
+              <div class="stat-pill-lbl">نظرات و پاسخ‌ها</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="bannerResTotalDuration">۰ ثانیه</div>
+              <div class="stat-pill-lbl">زمان کل پشتیبان‌گیری</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="bannerResWorkersUsed">۱ ترد</div>
+              <div class="stat-pill-lbl">پردازشگرها</div>
+            </div>
+          </div>
+
+          <div class="result-timestamp-card" style="margin-bottom: 0;">
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>تاریخ و زمان ثبت: <b id="bannerResTimestampVal">--</b></span>
+          </div>
+        </section>
+
         <!-- Profile Header -->
         <section class="profile-card" id="profileCard">
           <div class="profile-info">
@@ -372,6 +420,73 @@
             </svg>
             <span>توقف و لغو پشتیبان‌گیری</span>
           </button>
+        </div>
+
+        <!-- Modal Result State -->
+        <div id="modalResultState" style="display: none;">
+          <div class="result-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <span>پشتیبان‌گیری با موفقیت انجام شد</span>
+          </div>
+
+          <div class="result-stats-grid">
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="modalResPostsCount">۰</div>
+              <div class="stat-pill-lbl">تعداد مقالات</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="modalResCommentsCount">۰</div>
+              <div class="stat-pill-lbl">نظرات و پاسخ‌ها</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="modalResTotalDuration">۰ ثانیه</div>
+              <div class="stat-pill-lbl">زمان کل پشتیبان‌گیری</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-val" id="modalResWorkersUsed">۱ ترد</div>
+              <div class="stat-pill-lbl">پردازشگرها</div>
+            </div>
+          </div>
+
+          <div class="result-timestamp-card">
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>تاریخ و زمان ثبت: <b id="modalResTimestampVal">--</b></span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button id="modalBtnDownloadJson" class="btn btn-primary" style="width: 100%; justify-content: center;">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>دانلود فایل JSON</span>
+            </button>
+            <button id="modalBtnViewPdf" class="btn btn-outline-blue" style="width: 100%; justify-content: center;">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" />
+              </svg>
+              <span>چاپ و خروجی PDF</span>
+            </button>
+            <button id="modalBtnFinishView" class="btn btn-ghost" style="width: 100%; justify-content: center;">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              <span>مشاهده در داشبورد</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

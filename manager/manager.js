@@ -27,7 +27,23 @@ let modalAbortController = null;
 let modalTimerInterval = null;
 
 async function init() {
-  await loadBackups();
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetBackupId = urlParams.get('id');
+  const isSuccessRedirect = urlParams.get('success') === '1';
+
+  await loadBackups(targetBackupId);
+
+  if (isSuccessRedirect && activeBackup) {
+    showDashboardSuccessBanner(activeBackup);
+  }
+
+  const btnCloseBanner = document.getElementById('btnCloseSuccessBanner');
+  if (btnCloseBanner) {
+    btnCloseBanner.addEventListener('click', () => {
+      const banner = document.getElementById('dashboardSuccessBanner');
+      if (banner) banner.style.display = 'none';
+    });
+  }
 
   document.getElementById('btnRefresh').addEventListener('click', () => loadBackups());
   document.getElementById('postSearchInput').addEventListener('input', handleSearch);
@@ -70,7 +86,7 @@ async function init() {
   setupModalEvents();
 }
 
-async function loadBackups() {
+async function loadBackups(preferredId = null) {
   allBackups = await getAllBackups();
   document.getElementById('backupCountBadge').textContent = `${toPersianDigits(allBackups.length)} مورد`;
 
@@ -157,8 +173,10 @@ async function loadBackups() {
     listEl.appendChild(item);
   });
 
-  if (!activeBackup && allBackups.length > 0) {
-    selectBackup(allBackups[0].id);
+  if (preferredId && allBackups.some((b) => b.id === preferredId)) {
+    await selectBackup(preferredId);
+  } else if (!activeBackup && allBackups.length > 0) {
+    await selectBackup(allBackups[0].id);
   }
 }
 
@@ -447,11 +465,16 @@ function setupModalEvents() {
   const errorAlert = document.getElementById('modalErrorAlert');
   const inputState = document.getElementById('modalInputState');
   const progressState = document.getElementById('modalProgressState');
+  const resultState = document.getElementById('modalResultState');
+  const btnModalDownloadJson = document.getElementById('modalBtnDownloadJson');
+  const btnModalViewPdf = document.getElementById('modalBtnViewPdf');
+  const btnModalFinishView = document.getElementById('modalBtnFinishView');
 
   const openModal = () => {
     modal.style.display = 'flex';
     inputState.style.display = 'block';
     progressState.style.display = 'none';
+    if (resultState) resultState.style.display = 'none';
     errorAlert.style.display = 'none';
     usernameInput.value = '';
     setTimeout(() => usernameInput.focus(), 50);
@@ -465,6 +488,7 @@ function setupModalEvents() {
       modalAbortController = null;
     }
     modal.style.display = 'none';
+    if (resultState) resultState.style.display = 'none';
   };
 
   btnOpen.addEventListener('click', openModal);
@@ -481,6 +505,26 @@ function setupModalEvents() {
       startModalBackup();
     }
   });
+
+  if (btnModalDownloadJson) {
+    btnModalDownloadJson.addEventListener('click', () => {
+      if (activeBackup) exportBackupToJson(activeBackup);
+    });
+  }
+
+  if (btnModalViewPdf) {
+    btnModalViewPdf.addEventListener('click', () => {
+      if (activeBackup) {
+        window.open(`../print/print.html?id=${encodeURIComponent(activeBackup.id)}&autoprint=true`, '_blank');
+      }
+    });
+  }
+
+  if (btnModalFinishView) {
+    btnModalFinishView.addEventListener('click', () => {
+      closeModal();
+    });
+  }
 
   // Virgool Speed & Worker Range Slider setup
   const speedRange = document.getElementById('modalSpeedRange');
@@ -583,11 +627,20 @@ async function startModalBackup() {
     });
 
     await saveBackup(backupPackage);
-    await loadBackups();
+    await loadBackups(backupPackage.id);
     await selectBackup(backupPackage.id);
 
-    // Close modal
-    document.getElementById('newBackupModal').style.display = 'none';
+    // Transition modal to result state
+    progressState.style.display = 'none';
+    const resultState = document.getElementById('modalResultState');
+    if (resultState) {
+      resultState.style.display = 'block';
+      document.getElementById('modalResPostsCount').textContent = toPersianDigits(backupPackage.posts.length);
+      document.getElementById('modalResCommentsCount').textContent = toPersianDigits(backupPackage.stats.totalComments);
+      document.getElementById('modalResTotalDuration').textContent = formatDuration(backupPackage.stats.durationMs);
+      document.getElementById('modalResWorkersUsed').textContent = `${toPersianDigits(backupPackage.stats.workersUsed || speedConfig.workers || 1)} ترد`;
+      document.getElementById('modalResTimestampVal').textContent = formatPersianDate(backupPackage.createdAt, true);
+    }
   } catch (err) {
     console.error('Manager modal backup error:', err);
     progressState.style.display = 'none';
@@ -614,12 +667,32 @@ function cancelModalBackup() {
   }
   const inputState = document.getElementById('modalInputState');
   const progressState = document.getElementById('modalProgressState');
+  const resultState = document.getElementById('modalResultState');
   const errorAlert = document.getElementById('modalErrorAlert');
 
   progressState.style.display = 'none';
+  if (resultState) resultState.style.display = 'none';
   inputState.style.display = 'block';
   errorAlert.textContent = 'عملیات پشتیبان‌گیری توسط کاربر لغو شد.';
   errorAlert.style.display = 'block';
+}
+
+function showDashboardSuccessBanner(backup) {
+  const banner = document.getElementById('dashboardSuccessBanner');
+  if (!banner || !backup) return;
+
+  const totalComments = (backup.posts || []).reduce(
+    (acc, p) => acc + countAllComments(p.comments),
+    0
+  );
+
+  document.getElementById('bannerResPostsCount').textContent = toPersianDigits(backup.posts?.length || 0);
+  document.getElementById('bannerResCommentsCount').textContent = toPersianDigits(totalComments || backup.stats?.totalComments || 0);
+  document.getElementById('bannerResTotalDuration').textContent = backup.stats?.durationMs ? formatDuration(backup.stats.durationMs) : '۰ ثانیه';
+  document.getElementById('bannerResWorkersUsed').textContent = `${toPersianDigits(backup.stats?.workersUsed || 1)} ترد`;
+  document.getElementById('bannerResTimestampVal').textContent = formatPersianDate(backup.createdAt, true);
+
+  banner.style.display = 'block';
 }
 
 function setupSelectionEvents() {

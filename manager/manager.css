@@ -1211,3 +1211,130 @@ svg {
   align-items: center;
   gap: 3px;
 }
+
+/* Result States & Stat Cards */
+.result-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #2e7d32;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.result-title svg {
+  color: #2e7d32;
+}
+
+.result-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stat-pill {
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-pill-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-blue);
+  line-height: 1.2;
+}
+
+.stat-pill-lbl {
+  font-size: 11px;
+  color: var(--color-gray-600);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.result-timestamp-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--color-gray-700);
+  margin-bottom: 16px;
+}
+
+.result-timestamp-card b {
+  color: var(--color-gray-900);
+  font-weight: 700;
+}
+
+.result-timestamp-card svg {
+  color: var(--color-blue);
+}
+
+/* Dashboard Success Banner */
+.dashboard-success-banner {
+  background: #ffffff;
+  border: 1.5px solid #a7f3d0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+  animation: slideDownFade 0.3s ease-out;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.success-banner-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #065f46;
+}
+
+.success-banner-title svg {
+  color: #059669;
+}
+
+.banner-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.banner-close-btn:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-800);
+}
+
