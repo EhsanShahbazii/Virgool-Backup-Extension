@@ -3,7 +3,7 @@
  * Manages backup history, responsive pagination, search, inspection, and automatic print export.
  */
 
-import { getAllBackups, getBackupById, deleteBackup, saveBackup } from '../lib/storage.js';
+import { getAllBackups, getBackupById, deleteBackup, saveBackup, clearAllData } from '../lib/storage.js';
 import { backupUser, countAllComments, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
@@ -27,6 +27,8 @@ let modalAbortController = null;
 let modalTimerInterval = null;
 
 async function init() {
+  window.clearAllData = clearAllData;
+
   const urlParams = new URLSearchParams(window.location.search);
   const targetBackupId = urlParams.get('id');
   const isSuccessRedirect = urlParams.get('success') === '1';
@@ -42,6 +44,18 @@ async function init() {
     btnCloseBanner.addEventListener('click', () => {
       const banner = document.getElementById('dashboardSuccessBanner');
       if (banner) banner.style.display = 'none';
+    });
+  }
+
+  const btnClearAll = document.getElementById('btnClearAllData');
+  if (btnClearAll) {
+    btnClearAll.addEventListener('click', async () => {
+      const ok = await confirmDelete('تمام داده‌ها، نسخه‌های پشتیبان و کش محلی');
+      if (ok) {
+        await clearAllData();
+        activeBackup = null;
+        await loadBackups();
+      }
     });
   }
 
