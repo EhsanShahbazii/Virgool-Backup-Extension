@@ -27,77 +27,83 @@ let modalAbortController = null;
 let modalTimerInterval = null;
 
 async function init() {
-  window.clearAllData = clearAllData;
+  try {
+    if (typeof window !== 'undefined') {
+      window.clearAllData = clearAllData;
+    }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const targetBackupId = urlParams.get('id');
-  const isSuccessRedirect = urlParams.get('success') === '1';
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetBackupId = urlParams.get('id');
+    const isSuccessRedirect = urlParams.get('success') === '1';
 
-  await loadBackups(targetBackupId);
+    await loadBackups(targetBackupId);
 
-  if (isSuccessRedirect && activeBackup) {
-    showDashboardSuccessBanner(activeBackup);
-  }
+    if (isSuccessRedirect && activeBackup) {
+      showDashboardSuccessBanner(activeBackup);
+    }
 
-  const btnCloseBanner = document.getElementById('btnCloseSuccessBanner');
-  if (btnCloseBanner) {
-    btnCloseBanner.addEventListener('click', () => {
-      const banner = document.getElementById('dashboardSuccessBanner');
-      if (banner) banner.style.display = 'none';
+    const btnCloseBanner = document.getElementById('btnCloseSuccessBanner');
+    if (btnCloseBanner) {
+      btnCloseBanner.addEventListener('click', () => {
+        const banner = document.getElementById('dashboardSuccessBanner');
+        if (banner) banner.style.display = 'none';
+      });
+    }
+
+    const btnClearAll = document.getElementById('btnClearAllData');
+    if (btnClearAll) {
+      btnClearAll.addEventListener('click', async () => {
+        const ok = await confirmDelete('تمام داده‌ها، نسخه‌های پشتیبان و کش محلی');
+        if (ok) {
+          await clearAllData();
+          activeBackup = null;
+          await loadBackups();
+        }
+      });
+    }
+
+    document.getElementById('btnRefresh').addEventListener('click', () => loadBackups());
+    document.getElementById('postSearchInput').addEventListener('input', handleSearch);
+
+    // Page size selector
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+    pageSizeSelect.addEventListener('change', (e) => {
+      pageSize = parseInt(e.target.value, 10) || 8;
+      currentPage = 1;
+      renderCurrentPage();
     });
-  }
 
-  const btnClearAll = document.getElementById('btnClearAllData');
-  if (btnClearAll) {
-    btnClearAll.addEventListener('click', async () => {
-      const ok = await confirmDelete('تمام داده‌ها، نسخه‌های پشتیبان و کش محلی');
+    document.getElementById('btnExportAllPdf').addEventListener('click', () => {
+      if (!activeBackup) return;
+      window.open(`../print/print.html?id=${activeBackup.id}&autoprint=true`, '_blank');
+    });
+
+    document.getElementById('btnExportAllJson').addEventListener('click', () => {
+      if (!activeBackup) return;
+      exportBackupToJson(activeBackup);
+    });
+
+    // Multi-select action listeners
+    setupSelectionEvents();
+
+    document.getElementById('btnDeleteBackup').addEventListener('click', async () => {
+      if (!activeBackup) return;
+      const versionTag = activeBackup.versionLabel || (activeBackup.version && activeBackup.version > 1 ? `v${activeBackup.version}` : null);
+      const baseName = activeBackup.user?.name || activeBackup.user?.username || 'کاربر';
+      const displayName = versionTag ? `${baseName} (${versionTag})` : baseName;
+      const ok = await confirmDelete(displayName);
       if (ok) {
-        await clearAllData();
+        await deleteBackup(activeBackup.id);
         activeBackup = null;
         await loadBackups();
       }
     });
+
+    // Wire Modal Events
+    setupModalEvents();
+  } catch (err) {
+    console.error('Manager initialization error:', err);
   }
-
-  document.getElementById('btnRefresh').addEventListener('click', () => loadBackups());
-  document.getElementById('postSearchInput').addEventListener('input', handleSearch);
-
-  // Page size selector
-  const pageSizeSelect = document.getElementById('pageSizeSelect');
-  pageSizeSelect.addEventListener('change', (e) => {
-    pageSize = parseInt(e.target.value, 10) || 8;
-    currentPage = 1;
-    renderCurrentPage();
-  });
-
-  document.getElementById('btnExportAllPdf').addEventListener('click', () => {
-    if (!activeBackup) return;
-    window.open(`../print/print.html?id=${activeBackup.id}&autoprint=true`, '_blank');
-  });
-
-  document.getElementById('btnExportAllJson').addEventListener('click', () => {
-    if (!activeBackup) return;
-    exportBackupToJson(activeBackup);
-  });
-
-  // Multi-select action listeners
-  setupSelectionEvents();
-
-  document.getElementById('btnDeleteBackup').addEventListener('click', async () => {
-    if (!activeBackup) return;
-    const versionTag = activeBackup.versionLabel || (activeBackup.version && activeBackup.version > 1 ? `v${activeBackup.version}` : null);
-    const baseName = activeBackup.user?.name || activeBackup.user?.username || 'کاربر';
-    const displayName = versionTag ? `${baseName} (${versionTag})` : baseName;
-    const ok = await confirmDelete(displayName);
-    if (ok) {
-      await deleteBackup(activeBackup.id);
-      activeBackup = null;
-      await loadBackups();
-    }
-  });
-
-  // Wire Modal Events
-  setupModalEvents();
 }
 
 async function loadBackups(preferredId = null) {
@@ -189,8 +195,14 @@ async function loadBackups(preferredId = null) {
 
   if (preferredId && allBackups.some((b) => b.id === preferredId)) {
     await selectBackup(preferredId);
-  } else if (!activeBackup && allBackups.length > 0) {
+  } else if (activeBackup && allBackups.some((b) => b.id === activeBackup.id)) {
+    await selectBackup(activeBackup.id);
+  } else if (allBackups.length > 0) {
     await selectBackup(allBackups[0].id);
+  } else {
+    activeBackup = null;
+    document.getElementById('noBackupState').style.display = 'block';
+    document.getElementById('activeBackupContent').style.display = 'none';
   }
 }
 
@@ -799,6 +811,7 @@ function updateSelectionUI() {
   } else {
     selectAllCheckbox.checked = false;
     selectAllCheckbox.indeterminate = false;
+  }
 }
 
 /**
