@@ -104,7 +104,14 @@ async function init() {
   };
 
   btnPrint.addEventListener('click', printDoc);
-  document.getElementById('btnClose').addEventListener('click', () => window.close());
+
+  document.getElementById('btnClose').addEventListener('click', () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = `../manager/manager.html?id=${encodeURIComponent(backupData?.id || '')}`;
+    }
+  });
 
   const refreshAndPreload = () => {
     renderDocument();
