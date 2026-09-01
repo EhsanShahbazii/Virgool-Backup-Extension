@@ -540,6 +540,16 @@ svg {
   background: var(--color-blue-bg);
 }
 
+.btn-outline-orange {
+  background: transparent;
+  border-color: #ea580c;
+  color: #ea580c;
+}
+
+.btn-outline-orange:hover {
+  background: #fff7ed;
+}
+
 .btn-danger {
   background: transparent;
   border-color: var(--color-red);

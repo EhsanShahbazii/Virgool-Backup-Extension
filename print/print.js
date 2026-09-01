@@ -6,6 +6,7 @@
 import { getBackupById, getLatestBackup } from '../lib/storage.js';
 import { countAllComments } from '../lib/virgool-api.js';
 import { formatPersianDate, toPersianDigits } from '../lib/date-utils.js';
+import { exportBackupToHtml, exportSinglePostHtml } from '../lib/exporters/html-exporter.js';
 
 const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
 
@@ -105,11 +106,29 @@ async function init() {
 
   btnPrint.addEventListener('click', printDoc);
 
+  const btnExportHtml = document.getElementById('btnExportHtml');
+  if (btnExportHtml) {
+    btnExportHtml.addEventListener('click', () => {
+      if (!currentBackup) return;
+      const selectedFilter = select.value;
+      if (selectedFilter === 'all') {
+        exportBackupToHtml(currentBackup);
+      } else {
+        const post = currentBackup.posts?.find((p, idx) => (p.hash === selectedFilter || String(idx) === selectedFilter));
+        if (post) {
+          exportSinglePostHtml(post, currentBackup.user);
+        } else {
+          exportBackupToHtml(currentBackup);
+        }
+      }
+    });
+  }
+
   document.getElementById('btnClose').addEventListener('click', () => {
     if (window.history.length > 1) {
       window.history.back();
     } else {
-      window.location.href = `../manager/manager.html?id=${encodeURIComponent(backupData?.id || '')}`;
+      window.location.href = `../manager/manager.html?id=${encodeURIComponent(currentBackup?.id || '')}`;
     }
   });
 
