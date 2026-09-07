@@ -6,7 +6,6 @@
 import { getAllBackups, getBackupById, deleteBackup, saveBackup, clearAllData } from '../lib/storage.js';
 import { backupUser, countAllComments, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
-import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
 import { exportBackupToHtml, exportSinglePostHtml } from '../lib/exporters/html-exporter.js';
 import { formatPersianDate, toPersianDigits, formatDuration, formatTimer } from '../lib/date-utils.js';
 
@@ -398,9 +397,9 @@ function renderCurrentPage() {
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             <span>چاپ / PDF</span>
           </button>
-          <button class="btn btn-sm btn-secondary btn-md-post" title="خروجی فایل Markdown">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span>Markdown</span>
+          <button class="btn btn-sm btn-secondary btn-html-post" title="خروجی فایل HTML مستقل و آفلاین">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+            <span>HTML</span>
           </button>
           <a href="${post.url}" target="_blank" rel="noreferrer" class="btn btn-sm btn-secondary btn-virgool-link" title="مشاهده در ویرگول">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -445,9 +444,9 @@ function renderCurrentPage() {
       window.open(`../print/print.html?id=${activeBackup.id}&post=${post.hash}&autoprint=true`, '_blank');
     });
 
-    card.querySelector('.btn-md-post').addEventListener('click', (e) => {
+    card.querySelector('.btn-html-post').addEventListener('click', (e) => {
       e.stopPropagation();
-      exportSinglePostMarkdown(post, activeBackup.user);
+      exportSinglePostHtml(post, activeBackup.user);
     });
 
     card.querySelector('.btn-virgool-link').addEventListener('click', (e) => {
