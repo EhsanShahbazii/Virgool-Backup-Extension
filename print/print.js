@@ -12,7 +12,18 @@ const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.
 
 let currentBackup = null;
 
+function sanitizeBodyHtml(html) {
+  if (!html) return '';
+  return html
+    .replace(/<link\b[^>]*>/gi, '')
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<meta\b[^>]*>/gi, '');
+}
+
 async function init() {
+  // Remove any stale or unwanted preload links
+  document.querySelectorAll('link[rel="preload"]').forEach((el) => el.remove());
   const urlParams = new URLSearchParams(window.location.search);
   const backupId = urlParams.get('id');
   const postFilterParam = urlParams.get('post');
@@ -269,7 +280,7 @@ function renderDocument() {
         ` : ''}
 
         <div class="article-body">
-          ${post.content?.bodyHtml || `<p class="post-p">${escapeHtml(post.description || '')}</p>`}
+          ${sanitizeBodyHtml(post.content?.bodyHtml) || `<p class="post-p">${escapeHtml(post.description || '')}</p>`}
         </div>
 
         ${(showComments && post.comments && post.comments.length > 0) ? `
@@ -402,7 +413,10 @@ async function ensureImagesLoaded(container, onProgress) {
       // Safeguard: 5-second max timeout per image so dead links never block printing
       timer = setTimeout(finish, 5000);
       img.addEventListener('load', finish, { once: true });
-      img.addEventListener('error', finish, { once: true });
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+        finish();
+      }, { once: true });
     });
   });
 
