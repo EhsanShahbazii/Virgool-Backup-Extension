@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/توسعه‌دهنده-احسان%20شهبازی-107abe?style=for-the-badge" alt="Developer"></a>
-  <a href="https://github.com/EhsanShahbazii/virgool-backup"><img src="https://img.shields.io/badge/نسخه-v1.0.0-green?style=for-the-badge" alt="Version"></a>
+  <a href="https://github.com/EhsanShahbazii/Virgool-Backup-Extension"><img src="https://img.shields.io/badge/نسخه-v1.1.0-green?style=for-the-badge" alt="Version"></a>
   <img src="https://img.shields.io/badge/Manifest-V3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/قالب-فارسی%20%2F%20راست‌چین-orange?style=for-the-badge" alt="Persian RTL">
   <img src="https://img.shields.io/badge/لایسنس-MIT-purple?style=for-the-badge" alt="MIT License">
@@ -140,7 +140,7 @@
 
 1. این مخزن را دانلود کرده یا با دستور زیر کلون کنید:
    ```bash
-   git clone https://github.com/EhsanShahbazii/virgool-backup.git
+   git clone https://github.com/EhsanShahbazii/Virgool-Backup-Extension.git
    ```
 2. در نوار آدرس مرورگر خود وارد بخش مدیریت افزونه‌ها شوید:
    ```text
@@ -219,7 +219,7 @@ virgool-backup/
 
 توسعه‌داده‌شده با افتخار توسط **احسان شهبازی (Ehsan Shahbazi)**  
 - 🌐 پروفایل گیت‌هاب: [https://github.com/EhsanShahbazii](https://github.com/EhsanShahbazii)  
-- 📦 مخزن پروژه: [https://github.com/EhsanShahbazii/virgool-backup](https://github.com/EhsanShahbazii/virgool-backup)  
+- 📦 مخزن پروژه: [https://github.com/EhsanShahbazii/Virgool-Backup-Extension](https://github.com/EhsanShahbazii/Virgool-Backup-Extension)  
 
 در صورت داشتن هرگونه پیشنهاد، گزارش باگ یا تمایل به مشارکت در توسعه، خوشحال می‌شویم در بخش Issues یا Pull Requests گیت‌هاب با ما در ارتباط باشید.
 

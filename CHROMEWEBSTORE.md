@@ -39,7 +39,8 @@
 ۴. دکمه «شروع پشتیبان‌گیری» را بزنید و در پایان خروجی PDF یا JSON خود را دریافت کنید!
 
 توسعه‌داده‌شده با افتخار توسط **احسان شهبازی**  
-گیت‌هاب: https://github.com/EhsanShahbazii
+گیت‌هاب: https://github.com/EhsanShahbazii  
+مخزن پروژه: https://github.com/EhsanShahbazii/Virgool-Backup-Extension
 
 ---
 
@@ -66,11 +67,12 @@
 ---
 
 ## ۵. راهنمای تصاویر و اسکرین‌شات‌ها (Screenshots Specifications)
-
+ 
 ابعاد استاندارد برای کروم وب‌استور: **1280x800** یا **640x400** پیکسل
-
-1. **تصویر ۱ (Screenshot 1):** پنجره پاپ‌آپ با اسلایدر سرعت و تشخیص خودکار نام کاربری (`screenshots/popup.png`)
-2. **تصویر ۲ (Screenshot 2):** داشبورد مدیریت و گرید مقالات همراه با سایدبار (`screenshots/manager.png`)
-3. **تصویر ۳ (Screenshot 3):** قابلیت انتخاب چندگانه مقالات (`screenshots/multi-select.png`)
-4. **تصویر ۴ (Screenshot 4):** مدال تایید حذف ایمن با سوال از کاربر (`screenshots/delete-modal.png`)
-5. **تصویر ۵ (Screenshot 5):** پیش‌نمایش چاپ کتابچه PDF با جلد اختصاصی نویسنده (`screenshots/pdf-export.png`)
+ 
+1. **تصویر ۱ (Screenshot 1):** پنجره پاپ‌آپ با اسلایدر سرعت و تشخیص خودکار نام کاربری (`assets/images/1.png`)
+2. **تصویر ۲ (Screenshot 2):** نمایش زنده استخراج چندتردی و نوار پیشرفت درصد (`assets/images/2.png`)
+3. **تصویر ۳ (Screenshot 3):** داشبورد مدیریت و گرید مقالات همراه با بنر آماری (`assets/images/3.png`)
+4. **تصویر ۴ (Screenshot 4):** سایدبار تاریخچه نویسندگان و انتخاب آرشیو (`assets/images/4.png`)
+5. **تصویر ۵ (Screenshot 5):** پیش‌نمایش چاپ کتابچه PDF با فونت وزیرمتن و خروجی وب HTML (`assets/images/5.png`)
+6. **تصویر ۶ (Screenshot 6):** استخراج عمیق نظرات و پاسخ‌های تو در تو (`assets/images/6.png`)
