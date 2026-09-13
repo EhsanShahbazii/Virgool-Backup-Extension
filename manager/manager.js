@@ -7,7 +7,7 @@ import { getAllBackups, getBackupById, deleteBackup, saveBackup } from '../lib/s
 import { backupUser, countAllComments, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
-import { formatPersianDate, toPersianDigits } from '../lib/date-utils.js';
+import { formatPersianDate, toPersianDigits, formatDuration, formatTimer } from '../lib/date-utils.js';
 
 const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
 
@@ -24,6 +24,7 @@ let selectedPostHashes = new Set();
 
 // Modal backup state
 let modalAbortController = null;
+let modalTimerInterval = null;
 
 async function init() {
   await loadBackups();
@@ -130,7 +131,9 @@ async function loadBackups() {
       </div>
       <div class="backup-item-meta">
         <span>${toPersianDigits(b.posts?.length || 0)} مقاله</span>
+        <span>•</span>
         <span>${formatPersianDate(b.createdAt)}</span>
+        ${b.stats?.durationMs ? `<span>• ${formatDuration(b.stats.durationMs)}</span>` : ''}
       </div>
     `;
 
@@ -195,6 +198,11 @@ async function selectBackup(id) {
   document.getElementById('statPostsCount').textContent = toPersianDigits(activeBackup.posts?.length || 0);
   document.getElementById('statCommentsCount').textContent = toPersianDigits(totalComments || activeBackup.stats?.totalComments || 0);
   document.getElementById('statFollowers').textContent = toPersianDigits(user.followersCount || 0);
+
+  const durationEl = document.getElementById('statDuration');
+  if (durationEl) {
+    durationEl.textContent = activeBackup.stats?.durationMs ? formatDuration(activeBackup.stats.durationMs) : 'نامشخص';
+  }
 
   // Initialize filtered list and reset to page 1
   filteredPosts = activeBackup.posts || [];
@@ -547,6 +555,20 @@ async function startModalBackup() {
   const presetKey = speedRange ? speedRange.value : '1';
   const speedConfig = SPEED_PRESETS[presetKey] || SPEED_PRESETS[1];
 
+  // Initialize live timer and worker count in modal progress
+  const timerEl = document.getElementById('modalProgressTimer');
+  const workerInfoEl = document.getElementById('modalProgressWorkersInfo');
+  if (timerEl) timerEl.textContent = '۰۰:۰۰';
+  if (workerInfoEl) workerInfoEl.textContent = speedConfig.label;
+
+  const startTimestamp = Date.now();
+  if (modalTimerInterval) clearInterval(modalTimerInterval);
+  modalTimerInterval = setInterval(() => {
+    const elapsedSec = Math.floor((Date.now() - startTimestamp) / 1000);
+    const liveTimer = document.getElementById('modalProgressTimer');
+    if (liveTimer) liveTimer.textContent = formatTimer(elapsedSec);
+  }, 1000);
+
   try {
     const backupPackage = await backupUser(rawUsername, {
       signal: modalAbortController.signal,
@@ -573,11 +595,19 @@ async function startModalBackup() {
     errorAlert.textContent = err.message || 'خطایی در فرآیند پشتیبان‌گیری رخ داد.';
     errorAlert.style.display = 'block';
   } finally {
+    if (modalTimerInterval) {
+      clearInterval(modalTimerInterval);
+      modalTimerInterval = null;
+    }
     modalAbortController = null;
   }
 }
 
 function cancelModalBackup() {
+  if (modalTimerInterval) {
+    clearInterval(modalTimerInterval);
+    modalTimerInterval = null;
+  }
   if (modalAbortController) {
     modalAbortController.abort();
     modalAbortController = null;

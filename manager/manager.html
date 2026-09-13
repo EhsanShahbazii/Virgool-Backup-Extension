@@ -96,6 +96,10 @@
               <div class="stat-val" id="statFollowers">۰</div>
               <div class="stat-lbl">دنبال‌کننده</div>
             </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statDuration">۰ ثانیه</div>
+              <div class="stat-lbl">زمان کل بک‌آپ</div>
+            </div>
           </div>
         </section>
 
@@ -289,10 +293,10 @@
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
-                تک‌ترد • بدون ریسک
+               بدون ریسک
               </span>
               <span class="range-lbl-right">
-                ۸ پردازشگر • ریسک بالا
+                ریسک بالا
                 <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -330,6 +334,23 @@
           </div>
           <div id="modalProgressMsg"
             style="font-size: 12px; color: var(--color-gray-700); line-height: 1.6; min-height: 38px; margin-bottom: 12px;">
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-gray-100); border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 6px 12px; margin-bottom: 12px; font-size: 11.5px;">
+            <div style="display: flex; align-items: center; gap: 5px; color: var(--color-gray-700);">
+              <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>زمان سپری‌شده:</span>
+              <b id="modalProgressTimer" style="color: var(--color-blue); font-weight: 800;">۰۰:۰۰</b>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px; color: var(--color-gray-700);">
+              <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span id="modalProgressWorkersInfo">۱ پردازشگر</span>
+            </div>
           </div>
 
           <div class="dont-close-notice" style="margin-bottom: 14px;">
