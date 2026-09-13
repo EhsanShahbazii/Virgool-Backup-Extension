@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
   "name": "ویرگول بک‌آپ | Virgool Backup",
-  "version": "1.0.0",
-  "description": "پشتیبان‌گیری کامل از مقالات، متن، تصاویر و نظرات ویرگول با خروجی JSON و PDF",
+  "version": "1.1.0",
+  "author": "Ehsan Shahbazi",
+  "homepage_url": "https://github.com/EhsanShahbazii/Virgool-Backup-Extension",
+  "description": "پشتیبان‌گیری کامل از مقالات، متن، تصاویر و نظرات ویرگول با خروجی‌های PDF، HTML و JSON",
   "icons": {
     "16": "assets/icons/icon-16.png",
     "32": "assets/icons/icon-32.png",

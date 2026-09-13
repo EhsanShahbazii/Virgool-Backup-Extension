@@ -2,3 +2,6 @@
 *.tmp
 *.log
 Thumbs.db
+apis.txt
+.temp/
+
