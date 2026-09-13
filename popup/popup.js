@@ -4,9 +4,11 @@
  */
 
 import { backupUser, SPEED_PRESETS } from '../lib/virgool-api.js';
-import { saveBackup, getLatestBackup } from '../lib/storage.js';
+import { saveBackup, getAllBackups } from '../lib/storage.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { toPersianDigits } from '../lib/date-utils.js';
+
+const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
 
 let abortController = null;
 let currentBackupResult = null;
@@ -15,7 +17,7 @@ async function init() {
   setupUIEvents();
   setupSpeedControl();
   await checkActiveTabProfile();
-  await checkLatestSavedBackup();
+  await loadTopRecentBackups();
 }
 
 function setupUIEvents() {
@@ -35,6 +37,11 @@ function setupUIEvents() {
 
   btnOpenDashboard.addEventListener('click', openManager);
   btnOpenManagerFromRes.addEventListener('click', openManager);
+
+  const btnMoreBackups = document.getElementById('btnMoreBackups');
+  if (btnMoreBackups) {
+    btnMoreBackups.addEventListener('click', openManager);
+  }
 
   btnDownloadJson.addEventListener('click', () => {
     if (!currentBackupResult) return;
@@ -118,27 +125,63 @@ async function checkActiveTabProfile() {
   }
 }
 
-async function checkLatestSavedBackup() {
+async function loadTopRecentBackups() {
   try {
-    const latest = await getLatestBackup();
-    if (latest && latest.user) {
-      const footer = document.getElementById('latestBackupFooter');
-      const nameEl = document.getElementById('latestBackupName');
-      const linkEl = document.getElementById('latestBackupLink');
+    const all = await getAllBackups();
+    const section = document.getElementById('recentBackupsSection');
+    const listEl = document.getElementById('recentBackupsList');
+    if (!section || !listEl) return;
 
-      const versionTag = latest.versionLabel || (latest.version && latest.version > 1 ? `v${latest.version}` : null);
-      const baseName = latest.user.name || `@${latest.user.username}`;
-      nameEl.textContent = versionTag ? `${baseName} (${versionTag})` : baseName;
-      footer.style.display = 'flex';
+    if (!all || all.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
 
-      linkEl.addEventListener('click', () => {
+    const top3 = all.slice(0, 3);
+    listEl.innerHTML = '';
+
+    top3.forEach((item) => {
+      const versionTag = item.versionLabel || (item.version && item.version > 1 ? `v${item.version}` : null);
+      const baseName = item.user?.name || `@${item.user?.username || 'کاربر'}`;
+      const displayName = versionTag ? `${baseName} (${versionTag})` : baseName;
+      const avatarUrl = item.user?.avatar || DEFAULT_AVATAR_URL;
+      const postsCount = item.posts?.length || 0;
+
+      const itemEl = document.createElement('div');
+      itemEl.className = 'recent-backup-item';
+      itemEl.title = 'نمایش و چاپ کتابچه PDF';
+      itemEl.innerHTML = `
+        <div class="recent-item-user">
+          <img class="recent-item-avatar" src="${avatarUrl}" alt="" onerror="this.src='${DEFAULT_AVATAR_URL}'" />
+          <div class="recent-item-info">
+            <span class="recent-item-name">${escapeHtml(displayName)}</span>
+            <span class="recent-item-meta">${toPersianDigits(postsCount)} مقاله</span>
+          </div>
+        </div>
+        <div class="recent-item-actions">
+          <button class="recent-btn-view" type="button" title="چاپ PDF">
+            <span>چاپ</span>
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+          </button>
+        </div>
+      `;
+
+      itemEl.addEventListener('click', () => {
         chrome.tabs.create({
-          url: chrome.runtime.getURL(`print/print.html?id=${latest.id}`),
+          url: chrome.runtime.getURL(`print/print.html?id=${item.id}`),
         });
       });
-    }
+
+      listEl.appendChild(itemEl);
+    });
+
+    section.style.display = 'block';
   } catch (err) {
-    console.debug('Could not get latest backup:', err);
+    console.debug('Could not load top recent backups:', err);
   }
 }
 
@@ -155,7 +198,9 @@ async function startBackupProcess() {
   document.getElementById('inputCard').style.display = 'none';
   document.getElementById('progressBox').style.display = 'block';
   document.getElementById('resultBox').style.display = 'none';
-  document.getElementById('latestBackupFooter').style.display = 'none';
+  
+  const recentSection = document.getElementById('recentBackupsSection');
+  if (recentSection) recentSection.style.display = 'none';
 
   abortController = new AbortController();
 
@@ -173,6 +218,7 @@ async function startBackupProcess() {
 
     currentBackupResult = backupPackage;
     await saveBackup(backupPackage);
+    await loadTopRecentBackups();
 
     // Show result view
     document.getElementById('progressBox').style.display = 'none';
@@ -184,6 +230,7 @@ async function startBackupProcess() {
     console.error('Backup error:', err);
     document.getElementById('progressBox').style.display = 'none';
     document.getElementById('inputCard').style.display = 'block';
+    await loadTopRecentBackups();
     showError(err.message || 'خطایی در فرآیند پشتیبان‌گیری رخ داد.');
   } finally {
     abortController = null;
@@ -197,6 +244,7 @@ function cancelBackupProcess() {
   }
   document.getElementById('progressBox').style.display = 'none';
   document.getElementById('inputCard').style.display = 'block';
+  loadTopRecentBackups();
   showError('عملیات پشتیبان‌گیری لغو شد.');
 }
 
@@ -229,6 +277,16 @@ function showError(msg) {
 function hideError() {
   const alertEl = document.getElementById('errorAlert');
   alertEl.style.display = 'none';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 init();
