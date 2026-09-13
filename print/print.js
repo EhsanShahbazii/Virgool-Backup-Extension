@@ -71,19 +71,64 @@ async function init() {
   }
 
   // Setup listeners
-  document.getElementById('btnPrint').addEventListener('click', () => window.print());
+  const btnPrint = document.getElementById('btnPrint');
+  const printDoc = async () => {
+    const originalBtnHtml = btnPrint.innerHTML;
+    btnPrint.disabled = true;
+    btnPrint.classList.add('loading');
+    btnPrint.innerHTML = `
+      <svg class="icon spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+      <span>در حال آماده‌سازی تصاویر...</span>
+    `;
+
+    try {
+      await ensureImagesLoaded(container, (curr, total) => {
+        const span = btnPrint.querySelector('span');
+        if (span) {
+          span.textContent = `آماده‌سازی تصاویر (${toPersianDigits(curr)}/${toPersianDigits(total)})...`;
+        }
+      });
+    } catch (err) {
+      console.warn('Preload warning:', err);
+    } finally {
+      btnPrint.disabled = false;
+      btnPrint.classList.remove('loading');
+      btnPrint.innerHTML = originalBtnHtml;
+    }
+
+    // Allow a layout frame for the browser to render decoded bitmaps
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 150)));
+    window.print();
+  };
+
+  btnPrint.addEventListener('click', printDoc);
   document.getElementById('btnClose').addEventListener('click', () => window.close());
-  select.addEventListener('change', () => renderDocument());
-  document.getElementById('toggleComments').addEventListener('change', () => renderDocument());
-  document.getElementById('toggleImages').addEventListener('change', () => renderDocument());
+
+  const refreshAndPreload = () => {
+    renderDocument();
+    ensureImagesLoaded(container);
+  };
+
+  select.addEventListener('change', refreshAndPreload);
+  document.getElementById('toggleComments').addEventListener('change', refreshAndPreload);
+  document.getElementById('toggleImages').addEventListener('change', refreshAndPreload);
 
   renderDocument();
 
-  // If autoprint is requested, wait briefly for fonts/images and open print settings
+  // If autoprint is requested, wait for all images and fonts to finish loading and decoding
   if (shouldAutoPrint) {
-    setTimeout(() => {
-      window.print();
-    }, 450);
+    const badge = document.getElementById('postCountBadge');
+    const originalBadgeText = badge ? badge.textContent : '';
+    if (badge) badge.textContent = 'در حال بارگذاری تصاویر...';
+
+    await ensureImagesLoaded(container);
+
+    if (badge) badge.textContent = originalBadgeText;
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 200)));
+    window.print();
+  } else {
+    // Eagerly preload and decode images in background so they are ready instantly
+    ensureImagesLoaded(container);
   }
 }
 
@@ -183,7 +228,7 @@ function renderDocument() {
         </header>
 
         ${(showImages && post.image) ? `
-          <img class="article-cover" src="${post.image}" alt="${escapeHtml(post.title)}" />
+          <img class="article-cover" src="${post.image}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" />
         ` : ''}
 
         ${(post.sound && post.sound.url) ? `
@@ -220,11 +265,89 @@ function renderDocument() {
 
   container.innerHTML = html;
 
+  // Force all images in the document (including bodyHtml and avatars) to eager loading
+  container.querySelectorAll('img').forEach((img) => {
+    img.removeAttribute('loading');
+    img.setAttribute('loading', 'eager');
+    img.setAttribute('decoding', 'async');
+  });
+
   if (!showImages) {
     container.querySelectorAll('.post-figure, .article-cover').forEach((el) => {
       el.style.display = 'none';
     });
   }
+}
+
+/**
+ * Preload and decode all images & fonts inside a container so user does not need to scroll down
+ */
+async function ensureImagesLoaded(container, onProgress) {
+  if (!container) return;
+
+  const images = Array.from(container.querySelectorAll('img')).filter((img) => {
+    return img.style.display !== 'none' && (!img.parentElement || img.parentElement.style.display !== 'none');
+  });
+
+  images.forEach((img) => {
+    img.removeAttribute('loading');
+    img.setAttribute('loading', 'eager');
+    if (!img.src && img.dataset && img.dataset.src) {
+      img.src = img.dataset.src;
+    }
+  });
+
+  if (images.length === 0) {
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+    return;
+  }
+
+  let completedCount = 0;
+  const updateProgress = () => {
+    completedCount++;
+    if (onProgress) {
+      onProgress(completedCount, images.length);
+    }
+  };
+
+  const imagePromises = images.map((img) => {
+    return new Promise((resolve) => {
+      // If already complete with dimensions
+      if (img.complete && img.naturalWidth > 0) {
+        if (typeof img.decode === 'function') {
+          img.decode().then(resolve).catch(resolve);
+        } else {
+          resolve();
+        }
+        updateProgress();
+        return;
+      }
+
+      let timer = null;
+      const finish = () => {
+        if (timer) clearTimeout(timer);
+        img.removeEventListener('load', finish);
+        img.removeEventListener('error', finish);
+        if (typeof img.decode === 'function' && img.naturalWidth > 0) {
+          img.decode().then(resolve).catch(resolve);
+        } else {
+          resolve();
+        }
+        updateProgress();
+      };
+
+      // Safeguard: 5-second max timeout per image so dead links never block printing
+      timer = setTimeout(finish, 5000);
+      img.addEventListener('load', finish, { once: true });
+      img.addEventListener('error', finish, { once: true });
+    });
+  });
+
+  const fontsPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+  await Promise.allSettled([...imagePromises, fontsPromise]);
 }
 
 /**
@@ -243,7 +366,7 @@ function renderCommentCardRecursive(comment, depth = 0) {
     <div class="${cardClass}" id="comment-${comment.hash}">
       <div class="comment-top">
         <div class="comment-author">
-          <img class="comment-avatar" src="${avatar}" alt="" loading="lazy" />
+          <img class="comment-avatar" src="${avatar}" alt="" loading="eager" decoding="async" onerror="this.src='../assets/icons/icon-48.png'" />
           <div>
             <div class="comment-author-name">${escapeHtml(authorName)}</div>
             ${username ? `<div class="comment-author-user">@${escapeHtml(username)}</div>` : ''}

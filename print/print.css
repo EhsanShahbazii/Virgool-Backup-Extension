@@ -148,6 +148,27 @@ svg.icon-sm,
   outline: none;
 }
 
+.btn:disabled,
+.btn.loading {
+  opacity: 0.8;
+  cursor: wait !important;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 0.85s linear infinite;
+  transform-origin: center center;
+}
+
 .btn-primary {
   background: var(--color-blue);
   color: #ffffff;
