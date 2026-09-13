@@ -72,6 +72,18 @@ svg {
   flex-shrink: 0;
 }
 
+.icon-xs {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
 .btn svg {
   width: 16px !important;
   height: 16px !important;
@@ -1275,7 +1287,14 @@ svg {
 }
 
 .result-timestamp-card svg {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
   color: var(--color-blue);
+  flex-shrink: 0;
 }
 
 /* Dashboard Success Banner */

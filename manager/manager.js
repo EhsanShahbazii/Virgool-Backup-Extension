@@ -422,11 +422,11 @@ function renderCurrentPage() {
       updateSelectionUI();
     });
 
-    // Click on card body opens post in view without automatic print dialog
+    // Click on card body opens post in view in the same tab
     card.addEventListener('click', (e) => {
       // Don't trigger if clicked on child buttons/links or select wrap
       if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.post-card-select-wrap')) return;
-      window.open(`../print/print.html?id=${activeBackup.id}&post=${post.hash}&autoprint=false`, '_blank');
+      window.location.href = `../print/print.html?id=${encodeURIComponent(activeBackup.id)}&post=${encodeURIComponent(post.hash)}&autoprint=false`;
     });
 
     // Click on Print / PDF button opens post and automatically triggers print dialog
