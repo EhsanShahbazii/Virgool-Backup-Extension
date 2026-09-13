@@ -247,9 +247,57 @@
         <div id="modalInputState">
           <p style="font-size: 13px; color: var(--color-gray-700); margin-bottom: 12px;">نام کاربری نویسنده مورد نظر را
             وارد کنید:</p>
-          <div style="margin-bottom: 16px;">
+          <div style="margin-bottom: 14px;">
             <input type="text" id="modalUsernameInput" class="search-input" style="width: 100%; padding: 10px 18px;"
               placeholder="مثال: ehsanshahbazii" spellcheck="false" autocomplete="off">
+          </div>
+
+          <!-- Virgool Speed & Worker Range Slider -->
+          <div class="virgool-speed-control">
+            <div class="speed-control-header">
+              <div class="speed-control-title">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>سرعت و پردازشگرها (Worker):</span>
+              </div>
+              <span class="speed-badge risk-low" id="modalSpeedRiskBadge">
+                <span class="speed-badge-dot"></span>
+                <span id="modalSpeedBadgeText">۱ پردازشگر (امن)</span>
+              </span>
+            </div>
+
+            <div class="range-slider-wrapper">
+              <input 
+                type="range" 
+                id="modalSpeedRange" 
+                class="virgool-range-input" 
+                min="1" 
+                max="8" 
+                value="1" 
+                step="1"
+              />
+            </div>
+
+            <div class="speed-meta-info">
+              <div class="speed-meta-item">
+                <span class="speed-meta-label">پردازش همزمان:</span>
+                <span class="speed-meta-value" id="modalSpeedWorkerVal">۱ ترد (Single Thread)</span>
+              </div>
+              <div class="speed-meta-item">
+                <span class="speed-meta-label">تاخیر درخواست:</span>
+                <span class="speed-meta-value" id="modalSpeedDelayVal">۰.۰۵ ثانیه</span>
+              </div>
+            </div>
+
+            <div class="range-labels">
+              <span class="range-lbl-left">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                تک‌ترد • بدون ریسک
+              </span>
+              <span class="range-lbl-right">
+                ۸ پردازشگر • ریسک بالا
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+            </div>
           </div>
           <div id="modalErrorAlert"
             style="display: none; background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; padding: 10px 14px; border-radius: 10px; font-size: 12px; margin-bottom: 14px;">

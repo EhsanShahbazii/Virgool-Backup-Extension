@@ -3,7 +3,7 @@
  * Coordinates auto-detection of Virgool profiles, progress monitoring, and quick exports.
  */
 
-import { backupUser } from '../lib/virgool-api.js';
+import { backupUser, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { saveBackup, getLatestBackup } from '../lib/storage.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { toPersianDigits } from '../lib/date-utils.js';
@@ -13,6 +13,7 @@ let currentBackupResult = null;
 
 async function init() {
   setupUIEvents();
+  setupSpeedControl();
   await checkActiveTabProfile();
   await checkLatestSavedBackup();
 }
@@ -51,6 +52,47 @@ function setupUIEvents() {
   document.getElementById('usernameInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       startBackupProcess();
+    }
+  });
+}
+
+function setupSpeedControl() {
+  const speedRange = document.getElementById('speedRange');
+  const speedBadge = document.getElementById('speedRiskBadge');
+  const speedBadgeText = document.getElementById('speedBadgeText');
+  const speedWorkerVal = document.getElementById('speedWorkerVal');
+  const speedDelayVal = document.getElementById('speedDelayVal');
+
+  if (!speedRange) return;
+
+  const updateSpeedUI = (val) => {
+    const config = SPEED_PRESETS[val] || SPEED_PRESETS[1];
+    if (speedBadge) {
+      speedBadge.className = `speed-badge risk-${config.risk}`;
+    }
+    if (speedBadgeText) {
+      speedBadgeText.textContent = config.label;
+    }
+    if (speedWorkerVal) {
+      speedWorkerVal.textContent = config.threadText;
+    }
+    if (speedDelayVal) {
+      speedDelayVal.textContent = config.delayText;
+    }
+  };
+
+  // Restore previous saved preset or default to 1 (safe)
+  const savedPreset = localStorage.getItem('virgool_backup_speed_preset') || '1';
+  speedRange.value = savedPreset;
+  updateSpeedUI(savedPreset);
+
+  speedRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    updateSpeedUI(val);
+    try {
+      localStorage.setItem('virgool_backup_speed_preset', val);
+    } catch (err) {
+      // localStorage may fail in some sandboxed environments
     }
   });
 }
@@ -117,10 +159,16 @@ async function startBackupProcess() {
 
   abortController = new AbortController();
 
+  const speedRange = document.getElementById('speedRange');
+  const presetKey = speedRange ? speedRange.value : '1';
+  const speedConfig = SPEED_PRESETS[presetKey] || SPEED_PRESETS[1];
+
   try {
     const backupPackage = await backupUser(rawUsername, {
       signal: abortController.signal,
       onProgress: updateProgressUI,
+      workers: speedConfig.workers,
+      delayMs: speedConfig.delayMs,
     });
 
     currentBackupResult = backupPackage;
