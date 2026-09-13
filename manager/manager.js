@@ -57,7 +57,7 @@ async function init() {
     const versionTag = activeBackup.versionLabel || (activeBackup.version && activeBackup.version > 1 ? `v${activeBackup.version}` : null);
     const baseName = activeBackup.user?.name || activeBackup.user?.username || 'کاربر';
     const displayName = versionTag ? `${baseName} (${versionTag})` : baseName;
-    const ok = confirm(`آیا از حذف بک‌آپ «${displayName}» مطمئن هستید؟`);
+    const ok = await confirmDelete(displayName);
     if (ok) {
       await deleteBackup(activeBackup.id);
       activeBackup = null;
@@ -141,8 +141,8 @@ async function loadBackups() {
     const deleteBtn = item.querySelector('.backup-delete-btn');
     deleteBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const confirmed = confirm(`آیا از حذف نسخه پشتیبان «${displayName}» اطمینان دارید؟`);
-      if (confirmed) {
+      const ok = await confirmDelete(displayName);
+      if (ok) {
         await deleteBackup(b.id);
         if (activeBackup?.id === b.id) {
           activeBackup = null;
@@ -639,7 +639,46 @@ function updateSelectionUI() {
   } else {
     selectAllCheckbox.checked = false;
     selectAllCheckbox.indeterminate = false;
-  }
+}
+
+/**
+ * Opens a custom confirmation modal asking the user if they want to delete the given item
+ * @param {string} itemName Name of the item to delete
+ * @returns {Promise<boolean>} Resolves to true if user clicks yes, false if cancel
+ */
+function confirmDelete(itemName) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('deleteConfirmModal');
+    const targetNameEl = document.getElementById('deleteModalTargetName');
+    const btnConfirm = document.getElementById('btnConfirmDeleteModal');
+    const btnCancel = document.getElementById('btnCancelDeleteModal');
+
+    targetNameEl.textContent = itemName;
+    modal.style.display = 'flex';
+
+    const cleanup = (confirmed) => {
+      modal.style.display = 'none';
+      btnConfirm.removeEventListener('click', onConfirm);
+      btnCancel.removeEventListener('click', onCancel);
+      modal.removeEventListener('click', onOverlayClick);
+      document.removeEventListener('keydown', onKeyDown);
+      resolve(confirmed);
+    };
+
+    const onConfirm = () => cleanup(true);
+    const onCancel = () => cleanup(false);
+    const onOverlayClick = (e) => {
+      if (e.target === modal) cleanup(false);
+    };
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') cleanup(false);
+    };
+
+    btnConfirm.addEventListener('click', onConfirm);
+    btnCancel.addEventListener('click', onCancel);
+    modal.addEventListener('click', onOverlayClick);
+    document.addEventListener('keydown', onKeyDown);
+  });
 }
 
 init();
