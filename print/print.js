@@ -434,6 +434,8 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
 // Suppress any header title printing across all browsers
 let cachedDocumentTitle = document.title;
 window.addEventListener('beforeprint', () => {
