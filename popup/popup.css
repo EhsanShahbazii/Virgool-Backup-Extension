@@ -34,16 +34,14 @@ html {
   margin: 0;
   padding: 0;
   width: 380px;
-  height: fit-content;
-  overflow: hidden;
 }
 
 body {
   width: 380px;
-  height: fit-content;
+  min-height: 590px;
   margin: 0;
-  padding: 14px 16px;
-  overflow: hidden;
+  padding: 12px 14px 28px 14px;
+  box-sizing: border-box;
   font-family: var(--font-main);
   direction: rtl;
   text-align: right;
@@ -81,8 +79,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -126,8 +124,8 @@ body {
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: 14px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
@@ -155,7 +153,7 @@ body {
 .input-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .username-input {
@@ -396,9 +394,9 @@ body {
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .recent-backups-header {
@@ -453,7 +451,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 8px;
+  padding: 5px 8px;
   border-radius: 8px;
   background: var(--color-gray-100);
   border: 1px solid rgba(0, 0, 0, 0.03);
@@ -573,9 +571,9 @@ body {
 
 /* Developer Credit Footer */
 .popup-credit-footer {
-  margin-top: 8px;
+  margin-top: 10px;
   padding-top: 8px;
-  padding-bottom: 2px;
+  padding-bottom: 8px;
   border-top: 1px solid var(--color-gray-200);
   display: flex;
   align-items: center;
@@ -614,8 +612,8 @@ body {
   background: var(--color-gray-100);
   border: 1px solid var(--color-gray-200);
   border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
 }
 
 .speed-control-header {
