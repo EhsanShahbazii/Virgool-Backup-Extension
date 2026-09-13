@@ -29,15 +29,34 @@
   padding: 0;
 }
 
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  width: 380px;
+  height: fit-content;
+  overflow: hidden;
+}
+
 body {
   width: 380px;
+  height: fit-content;
+  margin: 0;
+  padding: 14px 16px;
+  overflow: hidden;
   font-family: var(--font-main);
   direction: rtl;
   text-align: right;
   background-color: var(--color-gray-75);
   color: var(--color-gray-900);
-  padding: 18px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Hide any scrollbars */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* SVG Icons Utility */
@@ -62,8 +81,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -107,8 +126,8 @@ body {
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
@@ -378,7 +397,8 @@ body {
   border: 1px solid var(--color-gray-200);
   border-radius: 12px;
   padding: 10px 12px;
-  margin-top: 12px;
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .recent-backups-header {
@@ -553,14 +573,15 @@ body {
 
 /* Developer Credit Footer */
 .popup-credit-footer {
-  margin-top: 14px;
-  padding-top: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  padding-bottom: 2px;
   border-top: 1px solid var(--color-gray-200);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--color-gray-600);
 }
 
@@ -593,8 +614,8 @@ body {
   background: var(--color-gray-100);
   border: 1px solid var(--color-gray-200);
   border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 14px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
 }
 
 .speed-control-header {

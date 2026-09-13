@@ -25,9 +25,7 @@ function setupUIEvents() {
   const btnStart = document.getElementById('btnStartBackup');
   const btnCancel = document.getElementById('btnCancelBackup');
   const btnOpenDashboard = document.getElementById('btnOpenDashboard');
-  const btnDownloadJson = document.getElementById('btnDownloadJson');
-  const btnViewPdf = document.getElementById('btnViewPdf');
-  const btnOpenManagerFromRes = document.getElementById('btnOpenManagerFromRes');
+  const btnMoreBackups = document.getElementById('btnMoreBackups');
 
   btnStart.addEventListener('click', startBackupProcess);
   btnCancel.addEventListener('click', cancelBackupProcess);
@@ -37,24 +35,9 @@ function setupUIEvents() {
   };
 
   btnOpenDashboard.addEventListener('click', openManager);
-  btnOpenManagerFromRes.addEventListener('click', openManager);
-
-  const btnMoreBackups = document.getElementById('btnMoreBackups');
   if (btnMoreBackups) {
     btnMoreBackups.addEventListener('click', openManager);
   }
-
-  btnDownloadJson.addEventListener('click', () => {
-    if (!currentBackupResult) return;
-    exportBackupToJson(currentBackupResult);
-  });
-
-  btnViewPdf.addEventListener('click', () => {
-    if (!currentBackupResult) return;
-    chrome.tabs.create({
-      url: chrome.runtime.getURL(`print/print.html?id=${currentBackupResult.id}`),
-    });
-  });
 
   // Allow pressing Enter in username field
   document.getElementById('usernameInput').addEventListener('keydown', (e) => {
@@ -205,8 +188,6 @@ async function startBackupProcess() {
   hideError();
   document.getElementById('inputCard').style.display = 'none';
   document.getElementById('progressBox').style.display = 'block';
-  document.getElementById('resultBox').style.display = 'none';
-  
   const recentSection = document.getElementById('recentBackupsSection');
   if (recentSection) recentSection.style.display = 'none';
 
@@ -242,27 +223,21 @@ async function startBackupProcess() {
     await saveBackup(backupPackage);
     await loadTopRecentBackups();
 
-    // Show result view with detailed stats
+    // Open manager dashboard focused on this backup with success banner
+    const managerUrl = chrome?.runtime?.getURL 
+      ? chrome.runtime.getURL(`manager/manager.html?id=${encodeURIComponent(backupPackage.id)}&success=1`)
+      : `../manager/manager.html?id=${encodeURIComponent(backupPackage.id)}&success=1`;
+
+    if (chrome?.tabs?.create) {
+      chrome.tabs.create({ url: managerUrl });
+    } else {
+      window.open(managerUrl, '_blank');
+    }
+
+    // Reset popup view to input card
     document.getElementById('progressBox').style.display = 'none';
-    document.getElementById('resultBox').style.display = 'block';
-
-    document.getElementById('resPostsCount').textContent = toPersianDigits(backupPackage.posts.length);
-    document.getElementById('resCommentsCount').textContent = toPersianDigits(backupPackage.stats.totalComments);
-
-    const totalDurEl = document.getElementById('resTotalDuration');
-    if (totalDurEl) {
-      totalDurEl.textContent = formatDuration(backupPackage.stats.durationMs);
-    }
-
-    const workersUsedEl = document.getElementById('resWorkersUsed');
-    if (workersUsedEl) {
-      workersUsedEl.textContent = `${toPersianDigits(backupPackage.stats.workersUsed || speedConfig.workers || 1)} ترد`;
-    }
-
-    const timestampEl = document.getElementById('resTimestampVal');
-    if (timestampEl) {
-      timestampEl.textContent = formatPersianDate(backupPackage.createdAt, true);
-    }
+    document.getElementById('inputCard').style.display = 'block';
+    usernameInput.value = '';
   } catch (err) {
     console.error('Backup error:', err);
     document.getElementById('progressBox').style.display = 'none';
