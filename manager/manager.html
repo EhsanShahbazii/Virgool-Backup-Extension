@@ -28,12 +28,20 @@
         </svg>
         <span>پشتیبان‌گیری جدید</span>
       </button>
-      <button id="btnRefresh" class="btn btn-secondary btn-sm">
+      <button id="btnRefresh" class="btn btn-secondary btn-sm" title="به‌روزرسانی فهرست">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
           <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
         </svg>
         <span>به‌روزرسانی</span>
+      </button>
+      <button id="btnClearAllData" class="btn btn-danger btn-sm" title="پاک‌سازی کامل تمام پشتیبان‌ها و کش">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        </svg>
+        <span>حذف تمام داده‌ها</span>
       </button>
     </div>
   </header>
@@ -281,7 +289,9 @@
         </div>
       </footer>
     </main>
-    <!-- New Backup Modal -->
+  </div>
+
+  <!-- New Backup Modal -->
     <div id="newBackupModal" class="modal-overlay" style="display: none;">
       <div class="modal-card">
         <div class="modal-header">
