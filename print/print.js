@@ -193,10 +193,11 @@ function renderDocument() {
   }
 
   // Render Articles
+  let articlesHtml = '';
   postsToRender.forEach((post) => {
     const totalPostComments = countAllComments(post.comments);
 
-    html += `
+    articlesHtml += `
       <article class="article-item" id="post-${post.hash}">
         <header class="article-header">
           <h2 class="article-title">${escapeHtml(post.title)}</h2>
@@ -263,7 +264,39 @@ function renderDocument() {
     `;
   });
 
+  if (articlesHtml) {
+    html += `
+      <table class="print-layout-table">
+        <thead><tr><td class="print-page-top-spacer"></td></tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="print-article-wrapper">
+                ${articlesHtml}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot><tr><td class="print-page-bottom-spacer"></td></tr></tfoot>
+      </table>
+    `;
+  }
+
   container.innerHTML = html;
+
+  // Set descriptive document title for PDF saving
+  const versionTag = currentBackup.versionLabel || (currentBackup.version && currentBackup.version > 1 ? `v${currentBackup.version}` : null);
+  const userDisplayName = versionTag 
+    ? `${user.name || user.username || 'کاربر ویرگول'} (${versionTag})`
+    : (user.name || user.username || 'کاربر ویرگول');
+
+  if (selectedPostVal === 'all') {
+    document.title = `کتابچه ویرگول — ${userDisplayName}`;
+  } else if (postsToRender.length === 1) {
+    document.title = `${postsToRender[0].title} — ${userDisplayName}`;
+  } else {
+    document.title = `مجموعه مقالات ویرگول — ${userDisplayName}`;
+  }
 
   // Force all images in the document (including bodyHtml and avatars) to eager loading
   container.querySelectorAll('img').forEach((img) => {
@@ -399,6 +432,15 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
-}
+// Suppress any header title printing across all browsers
+let cachedDocumentTitle = document.title;
+window.addEventListener('beforeprint', () => {
+  cachedDocumentTitle = document.title;
+  document.title = ' ';
+});
+
+window.addEventListener('afterprint', () => {
+  document.title = cachedDocumentTitle;
+});
 
 init();
