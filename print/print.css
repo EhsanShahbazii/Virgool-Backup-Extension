@@ -190,6 +190,16 @@ svg.icon-sm,
   background: var(--color-gray-100);
 }
 
+.btn-outline-orange {
+  background: #ffffff;
+  border-color: #ea580c;
+  color: #ea580c;
+}
+
+.btn-outline-orange:hover {
+  background: #fff7ed;
+}
+
 .toggle-label {
   display: flex;
   align-items: center;

@@ -7,6 +7,7 @@ import { getAllBackups, getBackupById, deleteBackup, saveBackup, clearAllData } 
 import { backupUser, countAllComments, SPEED_PRESETS } from '../lib/virgool-api.js';
 import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
+import { exportBackupToHtml, exportSinglePostHtml } from '../lib/exporters/html-exporter.js';
 import { formatPersianDate, toPersianDigits, formatDuration, formatTimer } from '../lib/date-utils.js';
 
 const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
@@ -63,10 +64,14 @@ async function init() {
     }
 
     document.getElementById('btnRefresh').addEventListener('click', () => loadBackups());
-    document.getElementById('postSearchInput').addEventListener('input', handleSearch);
+
+    // Controls
+    const searchInput = document.getElementById('postSearchInput');
+    searchInput.addEventListener('input', handleSearch);
 
     // Page size selector
     const pageSizeSelect = document.getElementById('pageSizeSelect');
+    pageSizeSelect.value = String(pageSize);
     pageSizeSelect.addEventListener('change', (e) => {
       pageSize = parseInt(e.target.value, 10) || 8;
       currentPage = 1;
@@ -76,6 +81,11 @@ async function init() {
     document.getElementById('btnExportAllPdf').addEventListener('click', () => {
       if (!activeBackup) return;
       window.open(`../print/print.html?id=${activeBackup.id}&autoprint=true`, '_blank');
+    });
+
+    document.getElementById('btnExportAllHtml').addEventListener('click', () => {
+      if (!activeBackup) return;
+      exportBackupToHtml(activeBackup);
     });
 
     document.getElementById('btnExportAllJson').addEventListener('click', () => {
@@ -725,6 +735,7 @@ function setupSelectionEvents() {
   const selectAllCheckbox = document.getElementById('selectAllCheckbox');
   const btnClearSelection = document.getElementById('btnClearSelection');
   const btnExportSelectedPdf = document.getElementById('btnExportSelectedPdf');
+  const btnExportSelectedHtml = document.getElementById('btnExportSelectedHtml');
   const btnExportSelectedJson = document.getElementById('btnExportSelectedJson');
 
   selectAllCheckbox.addEventListener('change', (e) => {
@@ -747,6 +758,29 @@ function setupSelectionEvents() {
     if (!activeBackup || selectedPostHashes.size === 0) return;
     const hashList = Array.from(selectedPostHashes).join(',');
     window.open(`../print/print.html?id=${activeBackup.id}&posts=${hashList}&autoprint=false`, '_blank');
+  });
+
+  btnExportSelectedHtml.addEventListener('click', () => {
+    if (!activeBackup || selectedPostHashes.size === 0) return;
+    const selectedPosts = (activeBackup.posts || []).filter((p) => selectedPostHashes.has(p.hash));
+    const totalComments = selectedPosts.reduce((acc, p) => acc + countAllComments(p.comments), 0);
+    const vTag = activeBackup.versionLabel ? `-${activeBackup.versionLabel}` : '';
+
+    const selectedBackupPackage = {
+      ...activeBackup,
+      id: `${activeBackup.id}_selected_${Date.now()}`,
+      stats: {
+        ...activeBackup.stats,
+        totalPosts: selectedPosts.length,
+        totalComments: totalComments,
+      },
+      posts: selectedPosts,
+    };
+
+    exportBackupToHtml(
+      selectedBackupPackage,
+      `virgool-${activeBackup.user?.username || 'backup'}${vTag}-selected-${selectedPosts.length}-posts-${new Date().toISOString().slice(0, 10)}.html`
+    );
   });
 
   btnExportSelectedJson.addEventListener('click', () => {
@@ -778,17 +812,21 @@ function updateSelectionUI() {
   const countBadge = document.getElementById('selectionCountBadge');
   const btnPdf = document.getElementById('btnExportSelectedPdf');
   const btnPdfText = document.getElementById('btnExportSelectedPdfText');
+  const btnHtml = document.getElementById('btnExportSelectedHtml');
+  const btnHtmlText = document.getElementById('btnExportSelectedHtmlText');
   const btnJson = document.getElementById('btnExportSelectedJson');
   const btnJsonText = document.getElementById('btnExportSelectedJsonText');
   const btnClear = document.getElementById('btnClearSelection');
   const selectAllCheckbox = document.getElementById('selectAllCheckbox');
 
-  if (!countBadge || !btnPdf || !btnJson || !selectAllCheckbox) return;
+  if (!countBadge || !btnPdf || !btnHtml || !btnJson || !selectAllCheckbox) return;
 
   if (count > 0) {
     countBadge.textContent = `${toPersianDigits(count)} مقاله انتخاب شد`;
     btnPdf.disabled = false;
     btnPdfText.textContent = `چاپ / PDF انتخابی (${toPersianDigits(count)})`;
+    btnHtml.disabled = false;
+    btnHtmlText.textContent = `خروجی HTML انتخابی (${toPersianDigits(count)})`;
     btnJson.disabled = false;
     btnJsonText.textContent = `خروجی JSON انتخابی (${toPersianDigits(count)})`;
     btnClear.style.display = 'inline-flex';
@@ -796,6 +834,8 @@ function updateSelectionUI() {
     countBadge.textContent = '۰ مورد انتخاب شد';
     btnPdf.disabled = true;
     btnPdfText.textContent = 'چاپ / PDF انتخابی';
+    btnHtml.disabled = true;
+    btnHtmlText.textContent = 'خروجی HTML انتخابی';
     btnJson.disabled = true;
     btnJsonText.textContent = 'خروجی JSON انتخابی';
     btnClear.style.display = 'none';
