@@ -9,6 +9,8 @@ import { exportBackupToJson } from '../lib/exporters/json-exporter.js';
 import { exportSinglePostMarkdown } from '../lib/exporters/markdown-exporter.js';
 import { formatPersianDate, toPersianDigits } from '../lib/date-utils.js';
 
+const DEFAULT_AVATAR_URL = 'https://static.virgool.io/images/app/avatar-default.jpg?x-img=v1/format,type_webp/resize,w_32,h_32/optimize,q_75';
+
 let allBackups = [];
 let activeBackup = null;
 
@@ -176,7 +178,11 @@ async function selectBackup(id) {
     ? `${user.name || user.username || 'کاربر ویرگول'} (${versionTag})` 
     : (user.name || user.username || 'کاربر ویرگول');
 
-  document.getElementById('userAvatar').src = user.avatar || '../assets/icons/icon-128.png';
+  const avatarEl = document.getElementById('userAvatar');
+  avatarEl.src = user.avatar || DEFAULT_AVATAR_URL;
+  avatarEl.onerror = () => {
+    avatarEl.src = DEFAULT_AVATAR_URL;
+  };
   document.getElementById('userName').textContent = displayName;
   document.getElementById('userHandle').textContent = `@${user.username || ''}`;
   document.getElementById('userBio').textContent = user.bio || '';
