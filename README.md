@@ -9,12 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/مشارکت‌کننده-EhsanShahbazii-0969da?style=for-the-badge&logo=github&logoColor=white" alt="Contributor"></a>
-  <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/توسعه‌دهنده-احسان%20شهبازی-107abe?style=for-the-badge" alt="Developer"></a>
-  <a href="https://github.com/EhsanShahbazii/Virgool-Backup-Extension"><img src="https://img.shields.io/badge/نسخه-v1.1.0-green?style=for-the-badge" alt="Version"></a>
-  <img src="https://img.shields.io/badge/Manifest-V3-blue?style=for-the-badge" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/قالب-فارسی%20%2F%20راست‌چین-orange?style=for-the-badge" alt="Persian RTL">
-  <img src="https://img.shields.io/badge/لایسنس-MIT-purple?style=for-the-badge" alt="MIT License">
+  <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/Author-EhsanShahbazii-0969da?style=for-the-badge&logo=github&logoColor=white" alt="Author"></a>
+  <a href="https://github.com/EhsanShahbazii/Virgool-Backup-Extension"><img src="https://img.shields.io/badge/Version-v1.1.0-2ea44f?style=for-the-badge" alt="Version"></a>
+  <img src="https://img.shields.io/badge/Manifest-V3-blue?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Manifest V3">
+  <img src="https://img.shields.io/badge/Language-Persian%20RTL-f0883e?style=for-the-badge" alt="Persian RTL">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-a371f7?style=for-the-badge" alt="MIT License"></a>
 </p>
 
 ---
@@ -229,7 +228,7 @@ virgool-backup/
   <p>
     <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/GitHub-@EhsanShahbazii-181717?style=flat-square&logo=github" alt="GitHub Profile"></a>
     <a href="https://github.com/EhsanShahbazii/Virgool-Backup-Extension"><img src="https://img.shields.io/badge/Repository-Virgool--Backup--Extension-107abe?style=flat-square&logo=git" alt="Repo"></a>
-    <a href="mailto:ehsanshahbazii@gmail.com"><img src="https://img.shields.io/badge/Email-ehsanshahbazii@gmail.com-ea4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"></a>
+    <a href="mailto:ehsan.shahbazipc@gmail.com"><img src="https://img.shields.io/badge/Email-ehsan.shahbazipc@gmail.com-ea4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"></a>
   </p>
 </div>
 
