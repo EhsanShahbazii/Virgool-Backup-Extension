@@ -216,22 +216,6 @@ virgool-backup/
 ---
 
 ## سازنده و مشارکت‌کنندگان (Contributors)
-
-<div align="center">
-  <a href="https://github.com/EhsanShahbazii">
-    <img src="https://github.com/EhsanShahbazii.png" width="110" height="110" style="border-radius: 50%; box-shadow: 0 4px 14px rgba(0,0,0,0.18);" alt="Ehsan Shahbazi (@EhsanShahbazii)"/>
-    <br/>
-    <h3>احسان شهبازی — Ehsan Shahbazi</h3>
-  </a>
-  <p><b>خالق، توسعه‌دهنده اصلی و نگه‌دارنده پروژه (Creator & Lead Contributor)</b></p>
-  
-  <p>
-    <a href="https://github.com/EhsanShahbazii"><img src="https://img.shields.io/badge/GitHub-@EhsanShahbazii-181717?style=flat-square&logo=github" alt="GitHub Profile"></a>
-    <a href="https://github.com/EhsanShahbazii/Virgool-Backup-Extension"><img src="https://img.shields.io/badge/Repository-Virgool--Backup--Extension-107abe?style=flat-square&logo=git" alt="Repo"></a>
-    <a href="mailto:ehsan.shahbazipc@gmail.com"><img src="https://img.shields.io/badge/Email-ehsan.shahbazipc@gmail.com-ea4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"></a>
-  </p>
-</div>
-
 این پروژه به دست **احسان شهبازی ([@EhsanShahbazii](https://github.com/EhsanShahbazii))** طراحی، پیاده‌سازی و نگه‌داری می‌شود.  
 در صورت داشتن هرگونه پیشنهاد، گزارش باگ یا تمایل به مشارکت در توسعه، خوشحال می‌شویم در بخش **[Issues](https://github.com/EhsanShahbazii/Virgool-Backup-Extension/issues)** یا **[Pull Requests](https://github.com/EhsanShahbazii/Virgool-Backup-Extension/pulls)** این مخزن همراه ما باشید.
 
